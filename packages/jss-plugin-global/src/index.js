@@ -57,7 +57,7 @@ class GlobalContainerRule implements ContainerRule {
 
   replaceRule(name, style, options) {
     const rule = this.rules.replace(name, style, options)
-    this.options.jss.plugins.onProcessRule(rule)
+    if (rule) this.options.jss.plugins.onProcessRule(rule)
     return rule
   }
 
