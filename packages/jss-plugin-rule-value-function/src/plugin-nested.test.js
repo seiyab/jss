@@ -5,7 +5,7 @@ import {getCss, getStyle, removeWhitespace, resetSheets} from '../../../tests/ut
 import pluginNested from '../../jss-plugin-nested'
 import pluginFunction from '.'
 
-const settings = {createGenerateId: () => (rule) => `${rule.key}-id`}
+const settings = {createGenerateId: () => rule => `${rule.key}-id`}
 
 describe('jss-plugin-rule-value-function: plugin-nested', () => {
   let jss
@@ -17,11 +17,13 @@ describe('jss-plugin-rule-value-function: plugin-nested', () => {
   describe('@media nested in fn rule', () => {
     let sheet
 
+    beforeEach(resetSheets())
+
     beforeEach(() => {
       sheet = jss
         .createStyleSheet(
           {
-            a: (data) => ({
+            a: data => ({
               color: data.color,
               '@media all': {
                 color: 'green'
@@ -37,18 +39,27 @@ describe('jss-plugin-rule-value-function: plugin-nested', () => {
       sheet.detach()
     })
 
+    const expectedCSS = stripIndent`
+      .a-id {
+        color: red;
+      }
+      @media all {
+        .a-id {
+          color: green;
+        }
+      }
+    `
+
     it('should return correct .toString()', () => {
       sheet.update({color: 'red'})
-      expect(sheet.toString()).to.be(stripIndent`
-        .a-id {
-          color: red;
-        }
-        @media all {
-          .a-id {
-            color: green;
-          }
-        }
-      `)
+      expect(sheet.toString()).to.be(expectedCSS)
+    })
+
+    it('should render correct CSS to DOM', () => {
+      sheet.update({color: 'red'})
+      const style = getStyle()
+      const css = getCss(style)
+      expect(css).to.be(expectedCSS)
     })
   })
 
@@ -61,7 +72,7 @@ describe('jss-plugin-rule-value-function: plugin-nested', () => {
           {
             a: {
               color: 'red',
-              '@media all': (data) => ({
+              '@media all': data => ({
                 color: data.color
               })
             }
