@@ -6,7 +6,7 @@ import toCssValue from './utils/toCssValue'
 /**
  * Cache the value from the first time a function is called.
  */
-const memoize = (fn) => {
+const memoize = fn => {
   let value
   return () => {
     if (!value) value = fn()
@@ -382,7 +382,7 @@ export default class DomRenderer {
     // We only want to reference the top level rules, deleteRule API doesn't support removing nested rules
     // like rules inside media queries or keyframes
     if (rule.options.parent instanceof StyleSheet) {
-      this.cssRules[index] = cssRule
+      this.cssRules.splice(index, 0, cssRule)
     }
   }
 
