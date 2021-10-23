@@ -93,7 +93,7 @@ describe('', () => {
     })
   })
 
-  describe('v10.8.0', () => {
+  describe.skip('v10.8.0', () => {
     describe('initial style', () => {
       it('registry', () => {
         expect(registry.toString()).to.be(stripIndent`
@@ -271,6 +271,94 @@ describe('', () => {
           }
           .item-d1-id:hover {
             font-size: 60px;
+          }
+          .item-d1-id:hover {
+            font-size: 60px;
+          }
+        `)
+        )
+      })
+    })
+  })
+
+  describe('use cssRules.splice', () => {
+    describe('initial style', () => {
+      it('registry', () => {
+        expect(registry.toString()).to.be(stripIndent`
+          .item-id {}
+          .item-d0-id {
+            color: red;
+          }
+          .item-d0-id:hover {
+            font-size: 60px;
+          }
+          .item-d1-id {
+            color: blue;
+          }
+          .item-d1-id:hover {
+            font-size: 60px;
+          }
+        `)
+      })
+      it('DOM', () => {
+        const style = getStyle()
+        expect(getCss(style)).to.be(
+          removeWhitespace(stripIndent`
+          .item-id {}
+          .item-d0-id {
+            color: red;
+          }
+          .item-d0-id:hover {
+            font-size: 60px;
+          }
+          .item-d1-id {
+            color: blue;
+          }
+          .item-d1-id:hover {
+            font-size: 60px;
+          }
+        `)
+        )
+      })
+    })
+
+    describe('after click', () => {
+      beforeEach(() => {
+        TestRenderer.act(() => {
+          root.root.findAllByType('button')[1].props.onClick()
+        })
+      })
+
+      it('registry', () => {
+        expect(registry.toString()).to.be(stripIndent`
+          .item-id {}
+          .item-d0-id {
+            color: blue;
+          }
+          .item-d0-id:hover {
+            font-size: 60px;
+          }
+          .item-d1-id {
+            color: red;
+          }
+          .item-d1-id:hover {
+            font-size: 60px;
+          }
+        `)
+      })
+      it('DOM', () => {
+        const style = getStyle()
+        expect(getCss(style)).to.be(
+          removeWhitespace(stripIndent`
+          .item-id {}
+          .item-d0-id {
+            color: blue;
+          }
+          .item-d0-id:hover {
+            font-size: 60px;
+          }
+          .item-d1-id {
+            color: red;
           }
           .item-d1-id:hover {
             font-size: 60px;
